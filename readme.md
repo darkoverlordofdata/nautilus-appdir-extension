@@ -13,6 +13,7 @@ an appdir is a file structure that looks like this:
 this is the same basic format as GNUstep applications; in fact this uses '/usr/GNUstep/System/Tools/openapp' to launch the app.
 
 * appdir_icon.py  - Iterates over the folder, replacing the folder icon with the .{app}.app/Resoures/{app}.png
+* appdir_menu.py   - Adds 'Add To Menu' to the context menu; this will add {app}.desktop to the system menu 
 * appdir_run.py   - Adds 'Run Application' to the context menu; runs .{app}.app/{app} 
 
 
@@ -23,6 +24,7 @@ sudo apt install nautilus-python
 git clone https://github.com/darkoverlordofdata/nautilus-appdir-extension.git
 cd nautilus-appdir-extension
 cp ./appdir_icon.py ~/.local/share/nautilus-python/extensions/appdir_icon.py
+cp ./appdir_menu.py ~/.local/share/nautilus-python/extensions/appdir_menu.py
 cp ./appdir_run.py ~/.local/share/nautilus-python/extensions/appdir_run.py
 
 nautilus -q

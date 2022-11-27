@@ -33,18 +33,41 @@ class AppDirIconPropertyPageProvider(GObject.GObject, Nautilus.PropertyPageProvi
         basename = os.path.basename(file_path).replace('.app', '')
         icon = file_path.replace('.app', f'.app/Resources/{basename}.png')
         exe = file_path.replace('.app', f'.app/{basename}')
+        gio = Gio.File.parse_name(file_path)
+        gio.set_attribute_string("metadata::custom-icon", f'file://{icon}', Gio.FileQueryInfoFlags.NONE, None)
+
+        #
+
+        file_path = unquote(urlparse(file.get_uri()).path)
+        name = file.get_name()
+        basename = os.path.basename(file_path).replace('.app', '')
+        icon = file_path.replace('.app', f'.app/Resources/{basename}.png')
+        home = os.environ['HOME']
+        file_name = f'{home}/.local/share/applications/{basename}.desktop'
+
+        content = '''#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Type=Application
+Name={name}
+Exec=/usr/GNUstep/System/Tools/openapp {file_path}
+Icon={icon}
+StartupWMClass={name}
+'''.format(name=name, file_path=file_path, icon=icon)
+
         metadata = {
             'name': name,
             'file_path': file_path,
             'basename': basename,
             'icon': icon,
-            'exe': exe
+            'exe': exe,
+            'file_name': file_name,
+            'content': content
         }
 
-        gio = Gio.File.parse_name(file_path)
-        gio.set_attribute_string("metadata::custom-icon", f'file://{icon}', Gio.FileQueryInfoFlags.NONE, None)
 
-        for row, key in enumerate(['name', 'basename', 'file_path', 'icon', 'exe']):
+        for row, key in enumerate(['name', 'basename', 'file_path', 'icon', 'exe', 'file_name', 'content']):
             val = ",".join(metadata[key]) if isinstance(metadata[key], list) else metadata[key] 
             grid.attach(Gtk.Label(f'{key.capitalize()}: ', xalign=1), 0, row, 1, 1)
             grid.attach(Gtk.Label(val, xalign=0), 1, row, 1, 1)

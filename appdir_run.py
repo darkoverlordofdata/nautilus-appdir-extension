@@ -29,6 +29,7 @@ class AppDirRunMenuProvider(GObject.GObject, Nautilus.MenuProvider):
 
 
 
+
         menu_item = Nautilus.MenuItem(
                         name="run_application",
                         label="Run Application")
