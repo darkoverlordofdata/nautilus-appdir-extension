@@ -7,6 +7,7 @@ darkoverlordofdata
 from urllib.parse import urlparse, unquote
 from gi.repository import GObject, Nautilus
 import os
+from appdir_utils import get_icon
 
 
 class AppDirAddToMenuProvider(GObject.GObject, Nautilus.MenuProvider):
@@ -16,7 +17,8 @@ class AppDirAddToMenuProvider(GObject.GObject, Nautilus.MenuProvider):
         file_path = unquote(urlparse(file.get_uri()).path)
         name = file.get_name()
         basename = os.path.basename(file_path).replace('.app', '')
-        icon = file_path.replace('.app', f'.app/Resources/{basename}.png')
+        # icon = file_path.replace('.app', f'.app/Resources/{basename}.png')
+        icon = get_icon(file_path, basename)
         home = os.environ['HOME']
         file_name = f'{home}/.local/share/applications/{basename}.desktop'
 

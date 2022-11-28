@@ -9,8 +9,11 @@ from urllib.parse import urlparse, unquote
 import os
 from urllib.parse import unquote, urlparse
 from gi.repository import Gio
+from appdir_utils import get_icon
+
 
 class AppDirIconPropertyPageProvider(GObject.GObject, Nautilus.PropertyPageProvider):
+
 
     def get_property_pages(self, files):
         if len(files) != 1:
@@ -31,19 +34,15 @@ class AppDirIconPropertyPageProvider(GObject.GObject, Nautilus.PropertyPageProvi
         file_path = unquote(urlparse(file.get_uri()).path)
         name = file.get_name()
         basename = os.path.basename(file_path).replace('.app', '')
-        icon = file_path.replace('.app', f'.app/Resources/{basename}.png')
+        icon = get_icon(file_path, basename)
         exe = file_path.replace('.app', f'.app/{basename}')
+        home = os.environ['HOME']
+        file_name = f'{home}/.local/share/applications/{basename}.desktop'
+
+        # while we're at it, update the folder icon
         gio = Gio.File.parse_name(file_path)
         gio.set_attribute_string("metadata::custom-icon", f'file://{icon}', Gio.FileQueryInfoFlags.NONE, None)
 
-        #
-
-        file_path = unquote(urlparse(file.get_uri()).path)
-        name = file.get_name()
-        basename = os.path.basename(file_path).replace('.app', '')
-        icon = file_path.replace('.app', f'.app/Resources/{basename}.png')
-        home = os.environ['HOME']
-        file_name = f'{home}/.local/share/applications/{basename}.desktop'
 
         content = '''#!/usr/bin/env xdg-open
 [Desktop Entry]
